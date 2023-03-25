@@ -25,13 +25,13 @@ from urllib.parse import (
 import uuid
 
 import aiohttp
-import cchardet
 import xmltodict
 
 from . import core_exceptions as exc
 from .const import DEFAULT_COUNTRY, DEFAULT_LANGUAGE, DEFAULT_TIMEOUT
 from .core_util import add_end_slash, as_list, gen_uuid
 from .device_info import KEY_DEVICE_ID, DeviceInfo
+from charset_normalizer import detect 
 
 # The core version
 CORE_VERSION = "coreAsync"
@@ -1500,7 +1500,7 @@ class ClientAsync:
         content = await self._auth.gateway.core.http_get_bytes(info_url)
 
         # we use cchardet to detect correct encoding and convert to unicode string
-        encoding = cchardet.detect(content)["encoding"]
+        encoding = detect(content).get("encoding") 
         try:
             str_content = str(content, encoding, errors="replace")
         except (LookupError, TypeError):
